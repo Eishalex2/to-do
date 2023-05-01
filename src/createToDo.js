@@ -1,10 +1,11 @@
-function toDo(title, dueDate, description, priority) {
+function toDo(title, description = "", priority = 0) {
   return {
     title,
-    dueDate,
     description,
     priority
   }
 }
 
 export default toDo;
+
+// skipping due date for now because I don't really understand date-fns
