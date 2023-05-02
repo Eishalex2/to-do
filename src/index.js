@@ -1,13 +1,10 @@
-import project from "./createProject";
-import toDo from "./createToDo";
+import CreateTask from "./createToDo";
+// import CreateProject from "./createProject";
+import addTaskToProject from "./addToDo";
 
-const defaultProject = project("inbox");
-const task0 = toDo("stuff");
+console.log("Hello");
 
-function addToDo(task, currentProject = defaultProject) {
-  currentProject.projectList.push(task);
-
-  return currentProject.projectList;
-}
-
-addToDo(task0);
+const task0 = CreateTask("stuff");
+const task1 = CreateTask("things");
+addTaskToProject(task0);
+addTaskToProject(task1);

@@ -1,11 +1,9 @@
-function toDo(title, description = "", priority = 0) {
-  return {
-    title,
-    description,
-    priority
-  }
-}
+const CreateTask = (title, description='', priority=0) => ({
+  title,
+  description,
+  priority
+});
 
-export default toDo;
+export default CreateTask;
 
 // skipping due date for now because I don't really understand date-fns

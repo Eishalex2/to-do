@@ -1,9 +1,9 @@
-function project(name) {
-  const projectList = [];
+const CreateProject = (name) => {
+  const taskList = [];
   return {
     name,
-    projectList
+    taskList
   }
-}
+};
 
-export default project;
+export default CreateProject;
