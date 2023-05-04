@@ -1,10 +1,9 @@
+import CreateProject from "./createProject";
 import CreateTask from "./createToDo";
-// import CreateProject from "./createProject";
 import addTaskToProject from "./addToDo";
 
-console.log("Hello");
+const projectList = document.getElementById('projects');
 
-const task0 = CreateTask("stuff");
-const task1 = CreateTask("things");
-addTaskToProject(task0);
-addTaskToProject(task1);
+const defaultProject = CreateProject("Inbox");
+
+projectList.appendChild(defaultProject.name); // can't append just the name. Instead, append a button, with the text content as the name!!

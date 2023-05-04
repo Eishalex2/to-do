@@ -1,11 +1,11 @@
 // import CreateTask from "./createToDo";
-import CreateProject from "./createProject";
+// import CreateProject from "./createProject";
 
-const defaultProject = CreateProject("Inbox");
+// const defaultProject = CreateProject("Inbox");
 
-const currentProject = defaultProject;
+// const currentProject = defaultProject;
 
-function addTaskToProject(task, project=currentProject) {
+function addTaskToProject(task, project) {
   project.taskList.push(task);
   console.log(project.taskList);
   return project.taskList;

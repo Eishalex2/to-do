@@ -1,0 +1,19 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  display: flex;
+  height: 100vh;
+}
+
+#projects {
+  flex: 1;
+  background-color: lightgray;
+}
+
+#tasks {
+  flex: 2;
+  background-color: azure;
+}
