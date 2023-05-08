@@ -7,7 +7,6 @@
 
 function addTaskToProject(task, project) {
   project.taskList.push(task);
-  console.log(project.taskList);
   return project.taskList;
 }
 
