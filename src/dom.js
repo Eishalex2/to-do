@@ -50,4 +50,9 @@ function pageLoad() {
   createTaskAdd();
 }
 
+function openTask(task) {
+  task.classList.add('open');
+  task.style.display = 'none';
+}
+
 export { pageLoad };
