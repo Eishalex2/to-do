@@ -58,16 +58,56 @@ function createProjectAdd() {
 }
 
 function createTaskAdd() {
+  const newTaskArea = document.createElement('div');
+
   const newTaskBtn = document.createElement('button');
   newTaskBtn.classList.add('new-task');
+  newTaskBtn.classList.add('popup');
+  newTaskBtn.classList.toggle('popup');
   newTaskBtn.textContent = '+ Add Task';
-  taskDisplay.appendChild(newTaskBtn);
+
+  const taskPopupDiv = document.createElement('div');
+  taskPopupDiv.classList.add('task-edit');
+  taskPopupDiv.classList.add('popup');
+  const titleInput = document.createElement('input');
+  titleInput.setAttribute('type', 'text');
+  const descriptionInput =document.createElement('input');
+  descriptionInput.setAttribute('type', 'text');
+  const priorityInput = document.createElement('input');
+  priorityInput.setAttribute('type', 'number');
+  priorityInput.setAttribute('min', 0);
+  priorityInput.setAttribute('max', 10);
+  priorityInput.setAttribute('value', 0);
+
+  taskPopupDiv.appendChild(titleInput);
+  taskPopupDiv.appendChild(descriptionInput);
+  taskPopupDiv.appendChild(priorityInput);
+
+  newTaskArea.appendChild(newTaskBtn);
+  newTaskArea.appendChild(taskPopupDiv);
+
+  taskDisplay.appendChild(newTaskArea);
+
+  newTaskBtn.addEventListener('click', (e) => {
+    e.target.classList.toggle('popup');
+    e.target.nextElementSibling.classList.toggle('popup');
+  });
+
+  taskPopupDiv.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+      if (titleInput.value === '') {
+        e.target.parentElement.classList.toggle('popup');
+        console.log(e.target.parentElement.previousElementSibling.classList.toggle('popup'));
+      } else {
+        newTaskArea.remove();
+        tasksUI(CreateTask(titleInput.value, descriptionInput.value, priorityInput.value));
+        createTaskAdd();
+      }
+    }
+  })
 }
 
 function projectsUI(project) {
-  // things are getting too complicated. Focusing on adding new projects
-  // now. Will need to figure out how to change the name of existing
-  // projects later.
   const projectArea = document.createElement('div');
 
   const projectBtn = document.createElement('button');
@@ -85,12 +125,18 @@ function projectsUI(project) {
   projectArea.appendChild(projectBtn);
   projectArea.appendChild(projectPopupDiv);
   projectDisplay.appendChild(projectArea);
+
+  projectBtn.addEventListener('click', () => {
+    project.taskList.forEach(task => tasksUI(task));
+  })
 }
 
 function tasksUI(task) {
   const taskBtn = document.createElement('button');
   taskBtn.classList.add('task');
   taskBtn.textContent = task.title;
+  taskBtn.setAttribute('data-description', task.description);
+  taskBtn.setAttribute('data-priority', task.priority);
   taskDisplay.appendChild(taskBtn);
 }
 
@@ -107,10 +153,6 @@ function pageLoad() {
   // tasks
   defaultProject.taskList.forEach(task => tasksUI(task));
   createTaskAdd();
-}
-
-function domLogic() {
-
 }
 
 export { pageLoad };
