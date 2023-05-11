@@ -39,3 +39,7 @@
 .new-task {
   background-color: greenyellow;
 }
+
+.popup {
+  display: none;
+}
