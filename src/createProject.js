@@ -1,8 +1,14 @@
 const CreateProject = (name) => {
+  let projectName = name;
   const taskList = [];
   return {
-    name,
-    taskList
+    taskList,
+    get name() {
+      return projectName;
+    },
+    set changeName(newName) {
+      projectName = newName;
+    }
   }
 };
 

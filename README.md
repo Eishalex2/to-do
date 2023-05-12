@@ -6,7 +6,8 @@ Todo list project in TOP
   pane
   
 
-- Editing existing tasks and projects. Both UI and console.
+- Editing existing tasks and projects. Both UI and console. (Console
+  part is done. Need to refactor the UI in order to add it there.)
 - Marking tasks as complete.
 - Due date stuff
 - Delete tasks
