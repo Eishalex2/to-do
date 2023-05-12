@@ -1,10 +1,9 @@
 import CreateProject from "./createProject";
 import CreateTask from "./createToDo";
-import addTaskToProject from "./addToDo";
+import { addTaskToProject, addProjectToList, getProjectList } from "./addToDo";
 
 const projectDisplay = document.getElementById('projects');
 const taskDisplay = document.getElementById('tasks');
-
 let currentProject;
 
 // function projectPopup() {
@@ -50,7 +49,13 @@ function createProjectAdd() {
         e.target.parentElement.previousElementSibling.classList.toggle('popup');
       } else {
         newProjectArea.remove();
-        projectsUI(CreateProject(e.target.value));
+        const newProject = CreateProject(e.target.value);
+        currentProject = newProject;
+        addProjectToList(newProject);
+
+        const previousProject = document.querySelector('.current-project');
+        previousProject.classList.remove('current-project');
+        projectsUI(newProject);
         createProjectAdd();
       }
     }
@@ -100,7 +105,11 @@ function createTaskAdd() {
         console.log(e.target.parentElement.previousElementSibling.classList.toggle('popup'));
       } else {
         newTaskArea.remove();
-        tasksUI(CreateTask(titleInput.value, descriptionInput.value, priorityInput.value));
+        const newTask = CreateTask(titleInput.value, descriptionInput.value, priorityInput.value);
+        console.log(newTask);
+        addTaskToProject(newTask, currentProject);
+        console.log(currentProject.taskList);
+        tasksUI(newTask);
         createTaskAdd();
       }
     }
@@ -110,7 +119,9 @@ function createTaskAdd() {
 function projectsUI(project) {
   const projectArea = document.createElement('div');
 
+
   const projectBtn = document.createElement('button');
+  projectBtn.classList.add('current-project');
   projectBtn.classList.add('project');
   projectBtn.classList.add('popup');
   projectBtn.classList.toggle('popup');
@@ -126,8 +137,14 @@ function projectsUI(project) {
   projectArea.appendChild(projectPopupDiv);
   projectDisplay.appendChild(projectArea);
 
-  projectBtn.addEventListener('click', () => {
+  projectBtn.addEventListener('click', (e) => {
+    taskDisplay.textContent = '';
+    currentProject = project;
+    const previousProject = document.querySelector('.current-project');
+    previousProject.classList.remove('current-project');
+    e.target.classList.add('current-project');
     project.taskList.forEach(task => tasksUI(task));
+    createTaskAdd();
   })
 }
 
@@ -137,6 +154,7 @@ function tasksUI(task) {
   taskBtn.textContent = task.title;
   taskBtn.setAttribute('data-description', task.description);
   taskBtn.setAttribute('data-priority', task.priority);
+  taskBtn.setAttribute('data-project', currentProject.name);
   taskDisplay.appendChild(taskBtn);
 }
 
@@ -146,8 +164,9 @@ function tasksUI(task) {
 function pageLoad() {
   // projects
   const defaultProject = CreateProject('Inbox');
-  currentProject = defaultProject;
+  addProjectToList(defaultProject);
   projectsUI(defaultProject);
+  currentProject = defaultProject;
   createProjectAdd();
 
   // tasks

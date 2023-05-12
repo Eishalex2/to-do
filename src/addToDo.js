@@ -10,6 +10,16 @@ function addTaskToProject(task, project) {
   return project.taskList;
 }
 
+const projectList = [];
+function addProjectToList(project) {
+  projectList.push(project);
+  // return projectList;
+}
+
+function getProjectList() {
+  return projectList;
+}
+
 // remove task (completed)
 
-export default addTaskToProject;
+export { addTaskToProject, addProjectToList, getProjectList };

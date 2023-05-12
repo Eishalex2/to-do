@@ -1,4 +1,5 @@
-const CreateTask = (title, description='', priority=0) => ({
+const CreateTask = (title, description='', priority=0) => (
+{ taskObj() {  this.title, this.description, this.priority },
   title,
   description,
   priority
