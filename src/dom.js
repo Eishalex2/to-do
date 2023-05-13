@@ -119,25 +119,40 @@ function createTaskAdd() {
 function projectsUI(project) {
   const projectArea = document.createElement('div');
 
-
-  const projectBtn = document.createElement('button');
-  projectBtn.classList.add('current-project');
-  projectBtn.classList.add('project');
-  projectBtn.classList.add('popup');
-  projectBtn.classList.toggle('popup');
+  const projectVisible = document.createElement('div');
+  const projectBtn = document.createElement('div');
+  projectVisible.classList.add('current-project');
+  projectVisible.classList.add('project');
+  projectVisible.classList.add('popup');
+  projectVisible.classList.toggle('popup');
   projectBtn.textContent = project.name;
+
+  const icons = document.createElement('div');
+  icons.classList.add('project-icons');
+
+  const editIcon = document.createElement('img');
+  editIcon.src = "images/edit.svg";
+  icons.appendChild(editIcon);
+
+  const trashIcon = document.createElement('img');
+  trashIcon.src = "images/trash.svg";
+  icons.appendChild(trashIcon);
+
+  projectVisible.appendChild(projectBtn);
+  projectVisible.appendChild(icons);
 
   const projectPopupDiv = document.createElement('div');
   projectPopupDiv.classList.add('popup');
   const projectNameInput = document.createElement('input');
   projectNameInput.setAttribute('type', 'text');
+  projectNameInput.value = project.name;
   projectPopupDiv.appendChild(projectNameInput);
 
-  projectArea.appendChild(projectBtn);
+  projectArea.appendChild(projectVisible);
   projectArea.appendChild(projectPopupDiv);
   projectDisplay.appendChild(projectArea);
 
-  projectBtn.addEventListener('click', (e) => {
+  projectVisible.addEventListener('click', (e) => {
     taskDisplay.textContent = '';
     currentProject = project;
     const previousProject = document.querySelector('.current-project');
@@ -145,6 +160,40 @@ function projectsUI(project) {
     e.target.classList.add('current-project');
     project.taskList.forEach(task => tasksUI(task));
     createTaskAdd();
+  })
+
+
+// edit project
+  editIcon.addEventListener('click', (e) => {
+    e.stopPropagation();
+    projectVisible.classList.toggle('popup');
+    projectPopupDiv.classList.toggle('popup');
+  })
+
+  
+  projectPopupDiv.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+      if (projectNameInput.value === '') {
+        projectArea.remove();
+      } else {
+        project.changeName = projectNameInput.value;
+        projectBtn.textContent = project.name;
+        projectPopupDiv.classList.toggle('popup');
+        projectVisible.classList.toggle('popup');
+        // console.log(getProjectList());
+      }
+    }
+  });
+
+  // delete project
+  trashIcon.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const projectList = getProjectList();
+    const index = projectList.findIndex(x => x.name === project.name);
+    if (index > -1) {
+      projectList.splice(index, 1);
+    }
+    projectArea.remove();
   })
 }
 

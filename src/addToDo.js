@@ -12,8 +12,9 @@ function addTaskToProject(task, project) {
 
 const projectList = [];
 function addProjectToList(project) {
-  projectList.push(project);
-  // return projectList;
+  const projectName = project.name;
+  const projectTaskList = project.taskList;
+  projectList.push({name: projectName, list: projectTaskList});
 }
 
 function getProjectList() {

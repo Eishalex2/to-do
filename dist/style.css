@@ -14,6 +14,7 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+  gap: 10px;
 }
 
 #tasks {
@@ -40,10 +41,33 @@
   background-color: greenyellow;
 }
 
-.popup {
-  display: none;
+
+
+.project {
+  background-color: plum;
+  border-radius: 5px;
+  padding: 5px 15px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 150px;
+  font-size: large;
 }
 
 .current-project {
-  background-color: purple;
+  background-color: lightcoral;
+}
+
+.project-icons {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+img {
+  height: 20px;
+}
+
+.popup {
+  display: none;
 }
