@@ -83,7 +83,7 @@ img {
 }
 
 .task-complete {
-  background-image: url("images/check.svg");
+  text-decoration: line-through;
 }
 
 /* must be last */
