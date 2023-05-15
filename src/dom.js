@@ -198,13 +198,38 @@ function projectsUI(project) {
 }
 
 function tasksUI(task) {
-  const taskBtn = document.createElement('button');
-  taskBtn.classList.add('task');
+  const taskArea = document.createElement('div');
+
+  const taskVisible = document.createElement('div');
+  const taskBtn = document.createElement('div');
+  taskVisible.classList.add('task');
   taskBtn.textContent = task.title;
-  taskBtn.setAttribute('data-description', task.description);
-  taskBtn.setAttribute('data-priority', task.priority);
-  taskBtn.setAttribute('data-project', currentProject.name);
-  taskDisplay.appendChild(taskBtn);
+
+  const circleIcon = document.createElement('img');
+  circleIcon.src = "images/circle.svg";
+
+  const icons = document.createElement('div');
+  icons.classList.add('task-icons');
+
+  const editIcon = document.createElement('img');
+  editIcon.src = "images/edit.svg";
+  icons.appendChild(editIcon);
+
+  const trashIcon = document.createElement('img');
+  trashIcon.src = "images/trash.svg";
+  icons.appendChild(trashIcon);
+
+  const index = currentProject.taskList.findIndex(x => x.title === task.title);
+  taskArea.setAttribute('data-index', index);
+  taskArea.setAttribute('data-project', currentProject.name);
+  
+  taskVisible.appendChild(circleIcon);
+  taskVisible.appendChild(taskBtn);
+  taskVisible.appendChild(icons);
+
+  taskArea.appendChild(taskVisible);
+
+  taskDisplay.appendChild(taskArea);
 }
 
 // function for showing tasks, switching projects. To remove children,
@@ -219,6 +244,8 @@ function pageLoad() {
   createProjectAdd();
 
   // tasks
+  const task0 = CreateTask('Testing', 'description test', 0);
+  addTaskToProject(task0, defaultProject);
   defaultProject.taskList.forEach(task => tasksUI(task));
   createTaskAdd();
 }
