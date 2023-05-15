@@ -1,3 +1,4 @@
+import { format, parseISO } from 'date-fns';
 import CreateProject from "./createProject";
 import { CreateTask, editTask } from "./createToDo";
 import { addTaskToProject, addProjectToList, getProjectList, deleteTask, completeTask, undoComplete } from "./addToDo";
@@ -73,6 +74,8 @@ function createTaskAdd() {
   taskPopupDiv.classList.add('popup');
   const titleInput = document.createElement('input');
   titleInput.setAttribute('type', 'text');
+  const dateInput = document.createElement('input');
+  dateInput.setAttribute('type', 'date');
   const descriptionInput =document.createElement('input');
   descriptionInput.setAttribute('type', 'text');
   const priorityInput = document.createElement('input');
@@ -82,6 +85,7 @@ function createTaskAdd() {
   priorityInput.setAttribute('value', 0);
 
   taskPopupDiv.appendChild(titleInput);
+  taskPopupDiv.appendChild(dateInput);
   taskPopupDiv.appendChild(descriptionInput);
   taskPopupDiv.appendChild(priorityInput);
 
@@ -102,7 +106,7 @@ function createTaskAdd() {
         console.log(e.target.parentElement.previousElementSibling.classList.toggle('popup'));
       } else {
         newTaskArea.remove();
-        const newTask = CreateTask(titleInput.value, descriptionInput.value, priorityInput.value);
+        const newTask = CreateTask(titleInput.value, dateInput.value, descriptionInput.value, priorityInput.value);
         console.log(newTask);
         addTaskToProject(newTask, currentProject);
         console.log(currentProject.taskList);
@@ -216,16 +220,12 @@ function completedTasksUI(task) {
   const checkedIcon = document.createElement('img');
   checkedIcon.src = "images/checkmark-circle.svg";
 
-  // const icons = document.createElement('div');
-  // icons.classList.add('task-icons');
-
-  // const editIcon = document.createElement('img');
-  // editIcon.src = "images/edit.svg";
-  // icons.appendChild(editIcon);
-
-  // const trashIcon = document.createElement('img');
-  // trashIcon.src = "images/trash.svg";
-  // icons.appendChild(trashIcon);
+  const taskDate = document.createElement('div');
+  if (task.dueDate === '') {
+    taskDate.textContent = '';
+  } else {
+    taskDate.textContent = format(new Date(task.dueDate), 'PP');
+  }
 
   const index = currentProject.completedTasks.findIndex(x => x.title === task.title);
   taskArea.setAttribute('data-index', index);
@@ -233,7 +233,7 @@ function completedTasksUI(task) {
   
   taskVisible.appendChild(checkedIcon);
   taskVisible.appendChild(taskBtn);
-  // taskVisible.appendChild(icons);
+  taskVisible.appendChild(taskDate);
 
   taskArea.appendChild(taskVisible);
 
@@ -258,6 +258,13 @@ function tasksUI(task) {
   taskVisible.classList.add('task');
   taskBtn.textContent = task.title;
 
+  const taskDate = document.createElement('div');
+  if (task.dueDate === '') {
+    taskDate.textContent = '';
+  } else {
+    taskDate.textContent = format(new Date(task.dueDate), 'PP');
+  }
+  
   const circleIcon = document.createElement('img');
   circleIcon.src = "images/circle.svg";
 
@@ -278,6 +285,7 @@ function tasksUI(task) {
   
   taskVisible.appendChild(circleIcon);
   taskVisible.appendChild(taskBtn);
+  taskVisible.appendChild(taskDate);
   taskVisible.appendChild(icons);
 
   taskArea.appendChild(taskVisible);
@@ -352,7 +360,7 @@ function pageLoad() {
   createProjectAdd();
 
   // tasks
-  const task0 = CreateTask('Testing', 'description test', 0);
+  const task0 = CreateTask('Testing', '2023-06-13', 'description test', 0);
   addTaskToProject(task0, defaultProject);
   defaultProject.taskList.forEach(task => tasksUI(task));
   defaultProject.completedTasks.forEach(task => completedTasksUI(task));

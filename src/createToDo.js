@@ -1,31 +1,39 @@
-const CreateTask = (title, description='', priority=0) => {
-  let projectTitle = title;
-  let projectDescription = description;
-  let projectPriority = priority;
+const CreateTask = (title, dueDate = '', description='', priority=0) => {
+  let taskTitle = title;
+  let taskDueDate = dueDate;
+  let taskDescription = description;
+  let taskPriority = priority;
   return {
     get title() {
-      return projectTitle;
+      return taskTitle;
+    },
+    get dueDate() {
+      return taskDueDate;
     },
     get description() {
-      return projectDescription;
+      return taskDescription;
     },
     get priority() {
-      return projectPriority;
+      return taskPriority;
     },
     set changeTitle(newTitle) {
-      projectTitle = newTitle;
+      taskTitle = newTitle;
+    },
+    set changeDueDate(newDueDate) {
+      taskDueDate = newDueDate;
     },
     set changeDescription(newDescription) {
-      projectDescription = newDescription;
+      taskDescription = newDescription;
     },
     set changePriority(newPriority) {
-      projectPriority = newPriority;
+      taskPriority = newPriority;
     }
   } 
 }
 
-function editTask(task, newTitle, newDescription, newPriority) {
+function editTask(task, newTitle, newDueDate, newDescription, newPriority) {
   task.changeTitle = newTitle;
+  task.changeDueDate = newDueDate;
   task.changeDescription = newDescription;
   task.changePriority = newPriority;
 }

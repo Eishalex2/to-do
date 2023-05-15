@@ -67,14 +67,16 @@ img {
 }
 
 .task {
-  width: 200px;
+  width: 66vw;
   display: grid;
   align-items: center;
-  grid-template-columns: 10% 1fr 20%;
+  grid-template-columns: 10% 5fr 1fr 20%;
   padding: 5px 10px;
   gap: 3px;
   margin-bottom: 5px;
 }
+
+
 
 .task-icons {
   display: flex;
