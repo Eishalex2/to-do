@@ -81,7 +81,7 @@ function createTaskAdd() {
   const priorityInput = document.createElement('input');
   priorityInput.setAttribute('type', 'number');
   priorityInput.setAttribute('min', 0);
-  priorityInput.setAttribute('max', 10);
+  priorityInput.setAttribute('max', 3);
   priorityInput.setAttribute('value', 0);
 
   taskPopupDiv.appendChild(titleInput);
@@ -228,6 +228,27 @@ function tasksUI(task) {
   taskVisible.appendChild(icons);
 
   taskArea.appendChild(taskVisible);
+
+  const taskPopupDiv = document.createElement('div');
+  taskPopupDiv.classList.add('task-edit');
+  taskPopupDiv.classList.add('popup');
+  const titleInput = document.createElement('input');
+  titleInput.setAttribute('type', 'text');
+  titleInput.value = task.title;
+  const descriptionInput =document.createElement('input');
+  descriptionInput.setAttribute('type', 'text');
+  descriptionInput.value = task.description;
+  const priorityInput = document.createElement('input');
+  priorityInput.setAttribute('type', 'number');
+  priorityInput.setAttribute('min', 0);
+  priorityInput.setAttribute('max', 3);
+  priorityInput.value = task.priority;
+
+  taskPopupDiv.appendChild(titleInput);
+  taskPopupDiv.appendChild(descriptionInput);
+  taskPopupDiv.appendChild(priorityInput);
+
+  taskArea.appendChild(taskPopupDiv);
 
   taskDisplay.appendChild(taskArea);
 }
