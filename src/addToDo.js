@@ -20,8 +20,18 @@ function deleteTask(project, index) {
   }
 }
 
-function completeTask(project, index) {
-  project.taskList.push(project.taskList.splice(index, 1)[0]);
+function completeTask(task, project, index) {
+  if (index > -1) {
+    project.taskList.splice(index, 1);
+  }
+  project.completedTasks.push(task);
 }
 
-export { addTaskToProject, addProjectToList, getProjectList, deleteTask, completeTask };
+function undoComplete(task, project, index) {
+  if (index > -1) {
+    project.completedTasks.splice(index, 1);
+  }
+  project.taskList.push(task);
+}
+
+export { addTaskToProject, addProjectToList, getProjectList, deleteTask, completeTask, undoComplete };

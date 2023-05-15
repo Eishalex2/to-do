@@ -1,6 +1,6 @@
 import CreateProject from "./createProject";
 import { CreateTask, editTask } from "./createToDo";
-import { addTaskToProject, addProjectToList, getProjectList, deleteTask, completeTask } from "./addToDo";
+import { addTaskToProject, addProjectToList, getProjectList, deleteTask, completeTask, undoComplete } from "./addToDo";
 
 const projectDisplay = document.getElementById('projects');
 const taskDisplay = document.getElementById('tasks');
@@ -149,16 +149,21 @@ function projectsUI(project) {
   projectArea.appendChild(projectPopupDiv);
   projectDisplay.appendChild(projectArea);
 
+  // prevents clicking on project name from switching the current project
+  projectBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+  })
+
   projectVisible.addEventListener('click', (e) => {
     taskDisplay.textContent = '';
     currentProject = project;
     const previousProject = document.querySelector('.current-project');
     previousProject.classList.remove('current-project');
     e.target.classList.add('current-project');
-    project.taskList.forEach(task => tasksUI(task));
+    currentProject.taskList.forEach(task => tasksUI(task));
+    currentProject.completedTasks.forEach(task => completedTasksUI(task));
     createTaskAdd();
   })
-
 
 // edit project
   editIcon.addEventListener('click', (e) => {
@@ -166,8 +171,6 @@ function projectsUI(project) {
     projectVisible.classList.toggle('popup');
     projectPopupDiv.classList.toggle('popup');
   })
-
- 
 
   projectPopupDiv.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') {
@@ -197,6 +200,52 @@ function projectsUI(project) {
       projectList.splice(index, 1);
     }
     projectArea.remove();
+  })
+}
+
+function completedTasksUI(task) {
+  const taskArea = document.createElement('div');
+  taskArea.classList.add('task-areas');
+  taskArea.classList.add('task-complete');
+
+  const taskVisible = document.createElement('div');
+  const taskBtn = document.createElement('div');
+  taskVisible.classList.add('task');
+  taskBtn.textContent = task.title;
+
+  const checkedIcon = document.createElement('img');
+  checkedIcon.src = "images/checkmark-circle.svg";
+
+  // const icons = document.createElement('div');
+  // icons.classList.add('task-icons');
+
+  // const editIcon = document.createElement('img');
+  // editIcon.src = "images/edit.svg";
+  // icons.appendChild(editIcon);
+
+  // const trashIcon = document.createElement('img');
+  // trashIcon.src = "images/trash.svg";
+  // icons.appendChild(trashIcon);
+
+  const index = currentProject.completedTasks.findIndex(x => x.title === task.title);
+  taskArea.setAttribute('data-index', index);
+  taskArea.setAttribute('data-project', currentProject.name);
+  
+  taskVisible.appendChild(checkedIcon);
+  taskVisible.appendChild(taskBtn);
+  // taskVisible.appendChild(icons);
+
+  taskArea.appendChild(taskVisible);
+
+  taskDisplay.appendChild(taskArea);
+
+  checkedIcon.addEventListener('click', (e) => {
+    e.stopPropagation();
+    undoComplete(task, currentProject, taskArea.getAttribute('data-index'));
+    taskDisplay.textContent = '';
+    currentProject.taskList.forEach(item => tasksUI(item));
+    currentProject.completedTasks.forEach(item => completedTasksUI(item));
+    createTaskAdd();
   })
 }
 
@@ -280,6 +329,15 @@ function tasksUI(task) {
     currentProject.taskList.forEach(item => tasksUI(item));
     createTaskAdd();
   })
+
+  circleIcon.addEventListener('click', (e) => {
+    e.stopPropagation();
+    completeTask(task, currentProject, taskArea.getAttribute('data-index'));
+    taskDisplay.textContent = '';
+    currentProject.taskList.forEach(item => tasksUI(item));
+    currentProject.completedTasks.forEach(item => completedTasksUI(item));
+    createTaskAdd();
+  })
 }
 
 // function for showing tasks, switching projects. To remove children,
@@ -297,6 +355,7 @@ function pageLoad() {
   const task0 = CreateTask('Testing', 'description test', 0);
   addTaskToProject(task0, defaultProject);
   defaultProject.taskList.forEach(task => tasksUI(task));
+  defaultProject.completedTasks.forEach(task => completedTasksUI(task));
   createTaskAdd();
 }
 
