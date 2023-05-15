@@ -41,8 +41,6 @@
   background-color: greenyellow;
 }
 
-
-
 .project {
   background-color: plum;
   border-radius: 5px;
@@ -68,6 +66,26 @@ img {
   height: 20px;
 }
 
+.task {
+  width: 200px;
+  display: grid;
+  align-items: center;
+  grid-template-columns: 10% 1fr 20%;
+  padding: 5px 10px;
+  gap: 3px;
+}
+
+.task-icons {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.task-complete {
+  background-image: url("images/check.svg");
+}
+
+/* must be last */
 .popup {
   display: none;
 }
