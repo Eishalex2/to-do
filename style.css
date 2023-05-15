@@ -73,6 +73,7 @@ img {
   grid-template-columns: 10% 1fr 20%;
   padding: 5px 10px;
   gap: 3px;
+  margin-bottom: 5px;
 }
 
 .task-icons {
