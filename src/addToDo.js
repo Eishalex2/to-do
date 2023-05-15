@@ -1,10 +1,3 @@
-// import CreateTask from "./createToDo";
-// import CreateProject from "./createProject";
-
-// const defaultProject = CreateProject("Inbox");
-
-// const currentProject = defaultProject;
-
 function addTaskToProject(task, project) {
   project.taskList.push(task);
   return project.taskList;
@@ -21,6 +14,14 @@ function getProjectList() {
   return projectList;
 }
 
-// remove task (completed)
+function deleteTask(project, index) {
+  if (index >= -1) {
+    project.taskList.splice(index, 1);
+  }
+}
 
-export { addTaskToProject, addProjectToList, getProjectList };
+function completeTask(project, index) {
+  project.taskList.push(project.taskList.splice(index, 1)[0]);
+}
+
+export { addTaskToProject, addProjectToList, getProjectList, deleteTask, completeTask };

@@ -24,6 +24,12 @@ const CreateTask = (title, description='', priority=0) => {
   } 
 }
 
-export default CreateTask;
+function editTask(task, newTitle, newDescription, newPriority) {
+  task.changeTitle = newTitle;
+  task.changeDescription = newDescription;
+  task.changePriority = newPriority;
+}
+
+export { CreateTask, editTask };
 
 // skipping due date for now because I don't really understand date-fns

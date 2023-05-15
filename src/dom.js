@@ -1,21 +1,15 @@
 import CreateProject from "./createProject";
-import CreateTask from "./createToDo";
-import { addTaskToProject, addProjectToList, getProjectList } from "./addToDo";
+import { CreateTask, editTask } from "./createToDo";
+import { addTaskToProject, addProjectToList, getProjectList, deleteTask, completeTask } from "./addToDo";
 
 const projectDisplay = document.getElementById('projects');
 const taskDisplay = document.getElementById('tasks');
 let currentProject;
 
-// function projectPopup() {
-//   const projectPopupDiv = document.createElement('div');
-//   projectPopupDiv.classList.add('popup');
-//   const projectNameInput = document.createElement('input');
-//   projectNameInput.setAttribute('type', 'text');
-//   projectPopupDiv.appendChild(projectNameInput);
-
-//  // projectNameInput.addEventListener()
-
-//   return projectPopupDiv;
+// function updateIndices(project) {
+//   const taskAreas = document.getElementsByClassName('task-areas');
+//   const taskAreasArray = [...taskAreas];
+//   taskAreasArray.forEach(area => area.setAttribute('data-index', ))
 // }
 
 function createProjectAdd() {
@@ -57,6 +51,9 @@ function createProjectAdd() {
         previousProject.classList.remove('current-project');
         projectsUI(newProject);
         createProjectAdd();
+
+        taskDisplay.textContent = '';
+        currentProject.taskList.forEach(task => tasksUI(task));
       }
     }
   })
@@ -170,17 +167,23 @@ function projectsUI(project) {
     projectPopupDiv.classList.toggle('popup');
   })
 
-  
+ 
+
   projectPopupDiv.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') {
       if (projectNameInput.value === '') {
+        const projectList = getProjectList(); 
+        const index = projectList.findIndex(x => x.name === project.name);
+        if (index >= -1) {
+          projectList.splice(index, 1);
+        }
         projectArea.remove();
+
       } else {
         project.changeName = projectNameInput.value;
         projectBtn.textContent = project.name;
         projectPopupDiv.classList.toggle('popup');
         projectVisible.classList.toggle('popup');
-        // console.log(getProjectList());
       }
     }
   });
@@ -188,7 +191,7 @@ function projectsUI(project) {
   // delete project
   trashIcon.addEventListener('click', (e) => {
     e.stopPropagation();
-    const projectList = getProjectList();
+    const projectList = getProjectList();  
     const index = projectList.findIndex(x => x.name === project.name);
     if (index > -1) {
       projectList.splice(index, 1);
@@ -199,6 +202,7 @@ function projectsUI(project) {
 
 function tasksUI(task) {
   const taskArea = document.createElement('div');
+  taskArea.classList.add('task-areas');
 
   const taskVisible = document.createElement('div');
   const taskBtn = document.createElement('div');
@@ -251,6 +255,31 @@ function tasksUI(task) {
   taskArea.appendChild(taskPopupDiv);
 
   taskDisplay.appendChild(taskArea);
+
+  editIcon.addEventListener('click', (e) => {
+    e.stopPropagation();
+    taskVisible.classList.toggle('popup');
+    taskPopupDiv.classList.toggle('popup');
+  })
+
+  taskPopupDiv.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+      // trash functionality
+
+      editTask(task, titleInput.value, descriptionInput.value, priorityInput.value);
+      taskBtn.textContent = task.title;
+
+      taskPopupDiv.classList.toggle('popup');
+      taskVisible.classList.toggle('popup');
+    }
+  })
+
+  trashIcon.addEventListener('click', () => {
+    deleteTask(currentProject, taskArea.getAttribute('data-index'));
+    taskDisplay.textContent = '';
+    currentProject.taskList.forEach(item => tasksUI(item));
+    createTaskAdd();
+  })
 }
 
 // function for showing tasks, switching projects. To remove children,
