@@ -1,17 +1,10 @@
-import { format, parseISO } from 'date-fns';
-import CreateProject from "./createProject";
-import { CreateTask, editTask } from "./createToDo";
-import { addTaskToProject, addProjectToList, getProjectList, deleteTask, completeTask, undoComplete } from "./addToDo";
+import { format } from 'date-fns';
+import projects from "./projects";
+import tasks from "./tasks";
 
 const projectDisplay = document.getElementById('projects');
 const taskDisplay = document.getElementById('tasks');
 let currentProject;
-
-// function updateIndices(project) {
-//   const taskAreas = document.getElementsByClassName('task-areas');
-//   const taskAreasArray = [...taskAreas];
-//   taskAreasArray.forEach(area => area.setAttribute('data-index', ))
-// }
 
 function createProjectAdd() {
   const newProjectArea = document.createElement('div');
@@ -44,17 +37,16 @@ function createProjectAdd() {
         e.target.parentElement.previousElementSibling.classList.toggle('popup');
       } else {
         newProjectArea.remove();
-        const newProject = CreateProject(e.target.value);
+        const newProject = projects.addProject(e.target.value);
         currentProject = newProject;
-        addProjectToList(newProject);
 
-        const previousProject = document.querySelector('.current-project');
-        previousProject.classList.remove('current-project');
-        projectsUI(newProject);
-        createProjectAdd();
+        // const previousProject = document.querySelector('.current-project');
+        // previousProject.classList.remove('current-project');
+        // projectsUI(newProject);
+        // createProjectAdd();
 
         taskDisplay.textContent = '';
-        currentProject.taskList.forEach(task => tasksUI(task));
+        currentProject.tasks.forEach(task => tasksUI(task));
       }
     }
   })
@@ -118,6 +110,9 @@ function createTaskAdd() {
 }
 
 function projectsUI(project) {
+
+  localStorage.setItem('projects', JSON.stringify(projectList));
+
   const projectArea = document.createElement('div');
 
   const projectVisible = document.createElement('div');
@@ -179,7 +174,6 @@ function projectsUI(project) {
   projectPopupDiv.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') {
       if (projectNameInput.value === '') {
-        const projectList = getProjectList(); 
         const index = projectList.findIndex(x => x.name === project.name);
         if (index >= -1) {
           projectList.splice(index, 1);
@@ -198,7 +192,6 @@ function projectsUI(project) {
   // delete project
   trashIcon.addEventListener('click', (e) => {
     e.stopPropagation();
-    const projectList = getProjectList();  
     const index = projectList.findIndex(x => x.name === project.name);
     if (index > -1) {
       projectList.splice(index, 1);
@@ -353,17 +346,25 @@ function tasksUI(task) {
 
 function pageLoad() {
   // projects
-  const defaultProject = CreateProject('Inbox');
-  addProjectToList(defaultProject);
-  projectsUI(defaultProject);
-  currentProject = defaultProject;
+
+  if (localStorage.getItem('projects') === null) {
+    console.log("null");
+    const defaultProject = CreateProject('Inbox');
+    addProjectToList(defaultProject);
+    projectsUI(defaultProject);
+    currentProject = defaultProject;
+    
+    const task0 = CreateTask('Example task', '2023-06-13', 'description test', 0);
+    addTaskToProject(task0, defaultProject);
+    defaultProject.taskList.forEach(task => tasksUI(task));
+  } else {
+    console.log("not null");
+    console.log(projectList);
+    const storedProjects = JSON.parse(localStorage.getItem('projects'));
+    projectList = storedProjects;
+  }
   createProjectAdd();
 
-  // tasks
-  const task0 = CreateTask('Testing', '2023-06-13', 'description test', 0);
-  addTaskToProject(task0, defaultProject);
-  defaultProject.taskList.forEach(task => tasksUI(task));
-  defaultProject.completedTasks.forEach(task => completedTasksUI(task));
   createTaskAdd();
 }
 
