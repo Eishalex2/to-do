@@ -10,6 +10,7 @@ const pageLoad = (() => {
 
     // show projects
   function showProjects() {
+    localStorage.setItem('projects', JSON.stringify(projects.projectList));
     projectDisplay.textContent = '';
     projects.projectList.forEach(project => {
       const projectArea = document.createElement('div');
@@ -57,7 +58,7 @@ const pageLoad = (() => {
         e.stopPropagation();
       });
 
-      projectVisible.addEventListener('click', (e) => {
+      projectVisible.addEventListener('click', () => {
         projects.projectList.forEach(project => {
           project.current = false;
         })
@@ -154,6 +155,7 @@ const pageLoad = (() => {
   // show tasks
   function showTasks() {
     taskDisplay.textContent = '';
+    localStorage.setItem('projects', JSON.stringify(projects.projectList));
     projects.projectList.forEach(project => {
       if (project.current === true) {
         project.tasks.forEach(task => {
