@@ -1,4 +1,4 @@
-import { parseJSON, format } from 'date-fns';
+import { format } from 'date-fns';
 import projects from "./projects";
 import tasks from "./tasks";
 
@@ -159,6 +159,8 @@ const pageLoad = (() => {
         project.tasks.forEach(task => {
           const taskArea = document.createElement('div');
           taskArea.classList.add('task-areas');
+          taskArea.classList.add('task-complete');
+          taskArea.classList.toggle('task-complete');
 
           const taskVisible = document.createElement('div');
           const taskBtn = document.createElement('div');
@@ -238,6 +240,32 @@ const pageLoad = (() => {
               taskVisible.classList.toggle('popup');
               taskPopupDiv.classList.toggle('popup');
             }
+          });
+
+          // delete task
+
+          trashIcon.addEventListener('click', () => {
+            const currentProjectIndex = projects.projectList.findIndex(x => x.current === true);
+            const currentTaskIndex = projects.projectList[currentProjectIndex].tasks.findIndex(x => x.title === taskBtn.textContent);
+            tasks.deleteTask(currentProjectIndex, currentTaskIndex);
+            showTasks();
+            createTaskAdd();
+          });
+
+          // toggle completion
+          circleIcon.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const currentProjectIndex = projects.projectList.findIndex(x => x.current === true);
+            const currentTaskIndex = projects.projectList[currentProjectIndex].tasks.findIndex(x => x.title === taskBtn.textContent);
+            tasks.toggleCompleteTask(currentProjectIndex, currentTaskIndex);
+            taskArea.classList.toggle('task-complete');
+            projects.projectList[currentProjectIndex].tasks.forEach(task => {
+              if (task.completed === true) {
+                circleIcon.setAttribute('src', 'images/checkmark-circle.svg');
+              } else {
+                circleIcon.setAttribute('src', 'images/circle.svg');
+              }
+            })
           })
 
         })
