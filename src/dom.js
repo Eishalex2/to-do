@@ -1,4 +1,4 @@
-import { format } from 'date-fns';
+import { parseJSON, format } from 'date-fns';
 import projects from "./projects";
 import tasks from "./tasks";
 
@@ -229,7 +229,14 @@ const pageLoad = (() => {
 
           taskPopupDiv.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
-              tasks.editTask(task, titleInput.value, )
+              const currentProjectIndex = projects.projectList.findIndex(x => x.current === true);
+              const currentTaskIndex = projects.projectList[currentProjectIndex].tasks.findIndex(x => x.title === taskBtn.textContent);
+              tasks.editTask(currentProjectIndex, currentTaskIndex, titleInput.value, dueDateInput.value, descriptionInput.value, priorityInput.value);
+              taskBtn.textContent = titleInput.value;
+              console.log(dueDateInput.value);
+              taskDate.textContent = format(new Date(dueDateInput.value), 'PP');
+              taskVisible.classList.toggle('popup');
+              taskPopupDiv.classList.toggle('popup');
             }
           })
 

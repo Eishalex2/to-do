@@ -76,11 +76,12 @@ const tasks = (() => {
     });
   }
 
-  function editTask(task, newTitle, newDueDate, newDescription, newPriority) {
-    task.changeTitle = newTitle;
-    task.changeDueDate = newDueDate;
-    task.changeDescription = newDescription;
-    task.changePriority = newPriority;
+  function editTask(projectIndex, taskIndex, newTitle, newDueDate, newDescription, newPriority) {
+    const currentTask = projects.projectList[projectIndex].tasks[taskIndex];
+    currentTask.title = newTitle;
+    currentTask.dueDate = newDueDate;
+    currentTask.description = newDescription;
+    currentTask.priority = newPriority;
   }
 
   function deleteTask(projectIndex, taskIndex) {
@@ -89,11 +90,12 @@ const tasks = (() => {
     }
   }
 
-  function toggleCompleteTask(task) {
-    if (task.taskCompleted === false) {
-      task.changeTaskCompleted = true;
+  function toggleCompleteTask(projectIndex, taskIndex) {
+    const currentTask = projects.projectList[projectIndex].tasks[taskIndex];
+    if (currentTask.completed === false) {
+      currentTask.completed = true;
     } else {
-      task.changeTaskCompleted = false;
+      currentTask.completed = false;
     }
   }
 

@@ -1,8 +1,8 @@
 const projects = (() => {
   let projectList = [];
 
-  if (localStorage.getItem('projects') === null) {
-    console.log("null");
+  // if (localStorage.getItem('projects') === null) {
+  //   console.log("null");
     projectList = [
       {
         name: 'Inbox',
@@ -21,10 +21,11 @@ const projects = (() => {
         ]
       }
     ]
-  } else {
-    const storageProjects = JSON.parse(localStorage.getItem('projects'));
-    projectList = storageProjects;
-  }
+  // } else {
+  //   // console.log("not null");
+  //   // const storageProjects = JSON.parse(localStorage.getItem('projects'));
+  //   // projectList = storageProjects;
+  // }
 
   const CreateProject = (name, projectIndex, current = false) => {
     let projectName = name;
