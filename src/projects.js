@@ -2,7 +2,6 @@ const projects = (() => {
   let projectList = [];
 
   if (localStorage.getItem('projects') === null) {
-    console.log("null");
     projectList = [
       {
         name: 'Inbox',
@@ -22,7 +21,6 @@ const projects = (() => {
       }
     ]
   } else {
-    console.log("not null");
     const storageProjects = JSON.parse(localStorage.getItem('projects'));
     projectList = storageProjects;
   }

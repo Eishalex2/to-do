@@ -3,7 +3,6 @@ import projects from "./projects";
 import tasks from "./tasks";
 
 const pageLoad = (() => {
-  console.log("Hello world");
 
   const projectDisplay = document.getElementById('projects');
   const taskDisplay = document.getElementById('tasks');
@@ -94,7 +93,6 @@ const pageLoad = (() => {
           projects.deleteProject(projectArea.getAttribute('data-index'));
         }
         projectArea.remove();
-        console.log(projects.projectList[0].current);
         showProjects();
         createProjectAdd();
         showTasks();
@@ -142,7 +140,6 @@ const pageLoad = (() => {
           createProjectAdd();
           showTasks();
           createTaskAdd();
-          console.log(projects.projectList);
         }
       }
 
@@ -237,7 +234,6 @@ const pageLoad = (() => {
               const currentTaskIndex = projects.projectList[currentProjectIndex].tasks.findIndex(x => x.title === taskBtn.textContent);
               tasks.editTask(currentProjectIndex, currentTaskIndex, titleInput.value, dueDateInput.value, descriptionInput.value, priorityInput.value);
               taskBtn.textContent = titleInput.value;
-              console.log(dueDateInput.value);
               taskDate.textContent = format(new Date(dueDateInput.value), 'PP');
               taskVisible.classList.toggle('popup');
               taskPopupDiv.classList.toggle('popup');
@@ -334,79 +330,5 @@ const pageLoad = (() => {
   createTaskAdd();
 
 });
-
-
-  // button for adding a new project
-
-
-  // display existing projects
-  // function showProjects() {
-  //   for (const project of projects.projectList) {
-  //     console.log(project.name);
-  //     const projectArea = document.createElement('div');
-
-  //     const projectVisible = document.createElement('div');
-  //     const projectBtn = document.createElement('div');
-  //     projectVisible.classList.add('current-project');
-  //     projectVisible.classList.add('project');
-  //     projectVisible.classList.add('popup');
-  //     projectVisible.classList.toggle('popup');
-  //     projectBtn.textContent = project.name;
-    
-  //     const icons = document.createElement('div');
-  //     icons.classList.add('project-icons');
-    
-  //     const editIcon = document.createElement('img');
-  //     editIcon.src = "images/edit.svg";
-  //     icons.appendChild(editIcon);
-    
-  //     const trashIcon = document.createElement('img');
-  //     trashIcon.src = "images/trash.svg";
-  //     icons.appendChild(trashIcon);
-    
-  //     projectVisible.appendChild(projectBtn);
-  //     projectVisible.appendChild(icons);
-    
-  //     const projectPopupDiv = document.createElement('div');
-  //     projectPopupDiv.classList.add('popup');
-  //     const projectNameInput = document.createElement('input');
-  //     projectNameInput.setAttribute('type', 'text');
-  //     projectNameInput.value = project.name;
-  //     projectPopupDiv.appendChild(projectNameInput);
-    
-  //     projectArea.appendChild(projectVisible);
-  //     projectArea.appendChild(projectPopupDiv);
-  //     projectDisplay.appendChild(projectArea);
-
-  //   }
-  // }
-
-
-
-
-// function pageLoad() {
-  // // projects
-
-  // if (localStorage.getItem('projects') === null) {
-  //   console.log("null");
-  //   const defaultProject = CreateProject('Inbox');
-  //   addProjectToList(defaultProject);
-  //   projectsUI(defaultProject);
-  //   currentProject = defaultProject;
-    
-  //   const task0 = CreateTask('Example task', '2023-06-13', 'description test', 0);
-  //   addTaskToProject(task0, defaultProject);
-  //   defaultProject.taskList.forEach(task => tasksUI(task));
-  // } else {
-  //   console.log("not null");
-  //   console.log(projectList);
-  //   const storedProjects = JSON.parse(localStorage.getItem('projects'));
-  //   projectList = storedProjects;
-  // }
-  // createProjectAdd();
-  // console.log(projects.projectList);
-
-  // createTaskAdd();
-
 
 export default pageLoad;
