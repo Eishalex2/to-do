@@ -2,370 +2,374 @@ import { format } from 'date-fns';
 import projects from "./projects";
 import tasks from "./tasks";
 
-const projectDisplay = document.getElementById('projects');
-const taskDisplay = document.getElementById('tasks');
-let currentProject;
+const pageLoad = (() => {
+  console.log("Hello world");
 
-function createProjectAdd() {
-  const newProjectArea = document.createElement('div');
+  const projectDisplay = document.getElementById('projects');
+  const taskDisplay = document.getElementById('tasks');
 
-  const newProjectBtn = document.createElement('button');
-  newProjectBtn.classList.add('new-project');
-  newProjectBtn.classList.add('popup');
-  newProjectBtn.classList.toggle('popup');
-  newProjectBtn.textContent = '+ New Project';
+    // show projects
+  function showProjects() {
+    projectDisplay.textContent = '';
+    projects.projectList.forEach(project => {
+      const projectArea = document.createElement('div');
+      projectArea.setAttribute('data-index', project.index);
+      projectArea.setAttribute('data-current', project.current);
 
-  const projectPopupDiv = document.createElement('div');
-  projectPopupDiv.classList.add('popup');
-  const projectNameInput = document.createElement('input');
-  projectNameInput.setAttribute('type', 'text');
-  projectPopupDiv.appendChild(projectNameInput);
+      const projectVisible = document.createElement('div');
+      const projectBtn = document.createElement('div');
+      projectVisible.classList.add('project');
+      projectVisible.classList.add('popup');
+      projectVisible.classList.toggle('popup');
+      projectBtn.textContent = project.name;
 
-  newProjectArea.appendChild(newProjectBtn);
-  newProjectArea.appendChild(projectPopupDiv);
-  projectDisplay.appendChild(newProjectArea);
+      const icons = document.createElement('div');
+      icons.classList.add('project-icons');
 
-  newProjectBtn.addEventListener('click', (e) => {
-    e.target.classList.toggle('popup');
-    e.target.nextElementSibling.classList.toggle('popup');
-  });
+      const editIcon = document.createElement('img');
+      editIcon.src = "images/edit.svg";
+      icons.appendChild(editIcon);
 
-  projectNameInput.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') {
-      if (projectNameInput.value === '') {
-        e.target.parentElement.classList.toggle('popup');
-        e.target.parentElement.previousElementSibling.classList.toggle('popup');
-      } else {
-        newProjectArea.remove();
-        const newProject = projects.addProject(e.target.value);
-        currentProject = newProject;
+      const trashIcon = document.createElement('img');
+      trashIcon.src = "images/trash.svg";
+      icons.appendChild(trashIcon);
 
-        // const previousProject = document.querySelector('.current-project');
-        // previousProject.classList.remove('current-project');
-        // projectsUI(newProject);
-        // createProjectAdd();
+      projectVisible.appendChild(projectBtn);
+      projectVisible.appendChild(icons);
 
-        taskDisplay.textContent = '';
-        currentProject.tasks.forEach(task => tasksUI(task));
+      const projectPopupDiv = document.createElement('div');
+      projectPopupDiv.classList.add('popup');
+      const projectNameInput = document.createElement('input');
+      projectNameInput.setAttribute('type', 'text');
+      projectNameInput.value = project.name;
+      projectPopupDiv.appendChild(projectNameInput);
+
+      projectArea.appendChild(projectVisible);
+      projectArea.appendChild(projectPopupDiv);
+      projectDisplay.appendChild(projectArea);
+
+      if (project.current === true) {
+        projectVisible.classList.add('current-project');
       }
-    }
-  })
-}
 
-function createTaskAdd() {
-  const newTaskArea = document.createElement('div');
+      // click to switch projects
+      projectBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+      });
 
-  const newTaskBtn = document.createElement('button');
-  newTaskBtn.classList.add('new-task');
-  newTaskBtn.classList.add('popup');
-  newTaskBtn.classList.toggle('popup');
-  newTaskBtn.textContent = '+ Add Task';
-
-  const taskPopupDiv = document.createElement('div');
-  taskPopupDiv.classList.add('task-edit');
-  taskPopupDiv.classList.add('popup');
-  const titleInput = document.createElement('input');
-  titleInput.setAttribute('type', 'text');
-  const dateInput = document.createElement('input');
-  dateInput.setAttribute('type', 'date');
-  const descriptionInput =document.createElement('input');
-  descriptionInput.setAttribute('type', 'text');
-  const priorityInput = document.createElement('input');
-  priorityInput.setAttribute('type', 'number');
-  priorityInput.setAttribute('min', 0);
-  priorityInput.setAttribute('max', 3);
-  priorityInput.setAttribute('value', 0);
-
-  taskPopupDiv.appendChild(titleInput);
-  taskPopupDiv.appendChild(dateInput);
-  taskPopupDiv.appendChild(descriptionInput);
-  taskPopupDiv.appendChild(priorityInput);
-
-  newTaskArea.appendChild(newTaskBtn);
-  newTaskArea.appendChild(taskPopupDiv);
-
-  taskDisplay.appendChild(newTaskArea);
-
-  newTaskBtn.addEventListener('click', (e) => {
-    e.target.classList.toggle('popup');
-    e.target.nextElementSibling.classList.toggle('popup');
-  });
-
-  taskPopupDiv.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') {
-      if (titleInput.value === '') {
-        e.target.parentElement.classList.toggle('popup');
-        console.log(e.target.parentElement.previousElementSibling.classList.toggle('popup'));
-      } else {
-        newTaskArea.remove();
-        const newTask = CreateTask(titleInput.value, dateInput.value, descriptionInput.value, priorityInput.value);
-        console.log(newTask);
-        addTaskToProject(newTask, currentProject);
-        console.log(currentProject.taskList);
-        tasksUI(newTask);
+      projectVisible.addEventListener('click', (e) => {
+        projects.projectList.forEach(project => {
+          project.current = false;
+        })
+        projects.projectList[projectArea.getAttribute('data-index')].current = true;
+        showProjects();
+        createProjectAdd();
+        showTasks();
         createTaskAdd();
-      }
-    }
-  })
-}
+      });
 
-function projectsUI(project) {
+      // edit project
+      editIcon.addEventListener('click', (e) => {
+        e.stopPropagation();
+        projectVisible.classList.toggle('popup');
+        projectPopupDiv.classList.toggle('popup');
+      });
 
-  localStorage.setItem('projects', JSON.stringify(projectList));
+      projectNameInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+          projects.editProject(projectNameInput.value, e.target.parentElement.parentElement.getAttribute('data-index'));
+          projectVisible.classList.toggle('popup');
+          projectPopupDiv.classList.toggle('popup');
+          projectBtn.textContent = e.target.value;      
+        }
+      })
 
-  const projectArea = document.createElement('div');
-
-  const projectVisible = document.createElement('div');
-  const projectBtn = document.createElement('div');
-  projectVisible.classList.add('current-project');
-  projectVisible.classList.add('project');
-  projectVisible.classList.add('popup');
-  projectVisible.classList.toggle('popup');
-  projectBtn.textContent = project.name;
-
-  const icons = document.createElement('div');
-  icons.classList.add('project-icons');
-
-  const editIcon = document.createElement('img');
-  editIcon.src = "images/edit.svg";
-  icons.appendChild(editIcon);
-
-  const trashIcon = document.createElement('img');
-  trashIcon.src = "images/trash.svg";
-  icons.appendChild(trashIcon);
-
-  projectVisible.appendChild(projectBtn);
-  projectVisible.appendChild(icons);
-
-  const projectPopupDiv = document.createElement('div');
-  projectPopupDiv.classList.add('popup');
-  const projectNameInput = document.createElement('input');
-  projectNameInput.setAttribute('type', 'text');
-  projectNameInput.value = project.name;
-  projectPopupDiv.appendChild(projectNameInput);
-
-  projectArea.appendChild(projectVisible);
-  projectArea.appendChild(projectPopupDiv);
-  projectDisplay.appendChild(projectArea);
-
-  // prevents clicking on project name from switching the current project
-  projectBtn.addEventListener('click', (e) => {
-    e.stopPropagation();
-  })
-
-  projectVisible.addEventListener('click', (e) => {
-    taskDisplay.textContent = '';
-    currentProject = project;
-    const previousProject = document.querySelector('.current-project');
-    previousProject.classList.remove('current-project');
-    e.target.classList.add('current-project');
-    currentProject.taskList.forEach(task => tasksUI(task));
-    currentProject.completedTasks.forEach(task => completedTasksUI(task));
-    createTaskAdd();
-  })
-
-// edit project
-  editIcon.addEventListener('click', (e) => {
-    e.stopPropagation();
-    projectVisible.classList.toggle('popup');
-    projectPopupDiv.classList.toggle('popup');
-  })
-
-  projectPopupDiv.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') {
-      if (projectNameInput.value === '') {
-        const index = projectList.findIndex(x => x.name === project.name);
-        if (index >= -1) {
-          projectList.splice(index, 1);
+      // delete project
+      trashIcon.addEventListener('click', () => {
+        if (projectArea.getAttribute('data-current') === true) {
+          projects.deleteProject(projectArea.getAttribute('data-index'));
+          projects.projectList[0].current = true;
+        } else {
+          projects.deleteProject(projectArea.getAttribute('data-index'));
         }
         projectArea.remove();
+        console.log(projects.projectList[0].current);
+        showProjects();
+        createProjectAdd();
+        showTasks();
+        createTaskAdd();
+      })
+    })
+  }
 
-      } else {
-        project.changeName = projectNameInput.value;
-        projectBtn.textContent = project.name;
-        projectPopupDiv.classList.toggle('popup');
-        projectVisible.classList.toggle('popup');
+  // project add button
+  function createProjectAdd() {
+    const newProjectArea = document.createElement('div');
+
+    const newProjectBtn = document.createElement('button');
+    newProjectBtn.classList.add('new-project');
+    newProjectBtn.classList.add('popup');
+    newProjectBtn.classList.toggle('popup');
+    newProjectBtn.textContent = '+ New Project';
+  
+    const projectPopupDiv = document.createElement('div');
+    projectPopupDiv.classList.add('popup');
+    const projectNameInput = document.createElement('input');
+    projectNameInput.setAttribute('type', 'text');
+    projectPopupDiv.appendChild(projectNameInput);
+  
+    newProjectArea.appendChild(newProjectBtn);
+    newProjectArea.appendChild(projectPopupDiv);
+    projectDisplay.appendChild(newProjectArea);
+
+    newProjectBtn.addEventListener('click', (e) => {
+      e.target.classList.toggle('popup');
+      e.target.nextElementSibling.classList.toggle('popup');
+    });
+
+    projectNameInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        if (projectNameInput.value === '') {
+          newProjectBtn.classList.toggle('popup');
+          projectPopupDiv.classList.toggle('popup');
+        } else {
+          projects.projectList.forEach(project => {
+            project.current = false;
+          })
+          projects.addProject(e.target.value);
+          showProjects();
+          createProjectAdd();
+          showTasks();
+          createTaskAdd();
+          console.log(projects.projectList);
+        }
       }
-    }
-  });
 
-  // delete project
-  trashIcon.addEventListener('click', (e) => {
-    e.stopPropagation();
-    const index = projectList.findIndex(x => x.name === project.name);
-    if (index > -1) {
-      projectList.splice(index, 1);
-    }
-    projectArea.remove();
-  })
-}
-
-function completedTasksUI(task) {
-  const taskArea = document.createElement('div');
-  taskArea.classList.add('task-areas');
-  taskArea.classList.add('task-complete');
-
-  const taskVisible = document.createElement('div');
-  const taskBtn = document.createElement('div');
-  taskVisible.classList.add('task');
-  taskBtn.textContent = task.title;
-
-  const checkedIcon = document.createElement('img');
-  checkedIcon.src = "images/checkmark-circle.svg";
-
-  const taskDate = document.createElement('div');
-  if (task.dueDate === '') {
-    taskDate.textContent = '';
-  } else {
-    taskDate.textContent = format(new Date(task.dueDate), 'PP');
+    });
   }
 
-  const index = currentProject.completedTasks.findIndex(x => x.title === task.title);
-  taskArea.setAttribute('data-index', index);
-  taskArea.setAttribute('data-project', currentProject.name);
-  
-  taskVisible.appendChild(checkedIcon);
-  taskVisible.appendChild(taskBtn);
-  taskVisible.appendChild(taskDate);
-
-  taskArea.appendChild(taskVisible);
-
-  taskDisplay.appendChild(taskArea);
-
-  checkedIcon.addEventListener('click', (e) => {
-    e.stopPropagation();
-    undoComplete(task, currentProject, taskArea.getAttribute('data-index'));
-    taskDisplay.textContent = '';
-    currentProject.taskList.forEach(item => tasksUI(item));
-    currentProject.completedTasks.forEach(item => completedTasksUI(item));
-    createTaskAdd();
-  })
-}
-
-function tasksUI(task) {
-  const taskArea = document.createElement('div');
-  taskArea.classList.add('task-areas');
-
-  const taskVisible = document.createElement('div');
-  const taskBtn = document.createElement('div');
-  taskVisible.classList.add('task');
-  taskBtn.textContent = task.title;
-
-  const taskDate = document.createElement('div');
-  if (task.dueDate === '') {
-    taskDate.textContent = '';
-  } else {
-    taskDate.textContent = format(new Date(task.dueDate), 'PP');
-  }
-  
-  const circleIcon = document.createElement('img');
-  circleIcon.src = "images/circle.svg";
-
-  const icons = document.createElement('div');
-  icons.classList.add('task-icons');
-
-  const editIcon = document.createElement('img');
-  editIcon.src = "images/edit.svg";
-  icons.appendChild(editIcon);
-
-  const trashIcon = document.createElement('img');
-  trashIcon.src = "images/trash.svg";
-  icons.appendChild(trashIcon);
-
-  const index = currentProject.taskList.findIndex(x => x.title === task.title);
-  taskArea.setAttribute('data-index', index);
-  taskArea.setAttribute('data-project', currentProject.name);
-  
-  taskVisible.appendChild(circleIcon);
-  taskVisible.appendChild(taskBtn);
-  taskVisible.appendChild(taskDate);
-  taskVisible.appendChild(icons);
-
-  taskArea.appendChild(taskVisible);
-
-  const taskPopupDiv = document.createElement('div');
-  taskPopupDiv.classList.add('task-edit');
-  taskPopupDiv.classList.add('popup');
-  const titleInput = document.createElement('input');
-  titleInput.setAttribute('type', 'text');
-  titleInput.value = task.title;
-  const descriptionInput =document.createElement('input');
-  descriptionInput.setAttribute('type', 'text');
-  descriptionInput.value = task.description;
-  const priorityInput = document.createElement('input');
-  priorityInput.setAttribute('type', 'number');
-  priorityInput.setAttribute('min', 0);
-  priorityInput.setAttribute('max', 3);
-  priorityInput.value = task.priority;
-
-  taskPopupDiv.appendChild(titleInput);
-  taskPopupDiv.appendChild(descriptionInput);
-  taskPopupDiv.appendChild(priorityInput);
-
-  taskArea.appendChild(taskPopupDiv);
-
-  taskDisplay.appendChild(taskArea);
-
-  editIcon.addEventListener('click', (e) => {
-    e.stopPropagation();
-    taskVisible.classList.toggle('popup');
-    taskPopupDiv.classList.toggle('popup');
-  })
-
-  taskPopupDiv.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') {
-      // trash functionality
-
-      editTask(task, titleInput.value, descriptionInput.value, priorityInput.value);
-      taskBtn.textContent = task.title;
-
-      taskPopupDiv.classList.toggle('popup');
-      taskVisible.classList.toggle('popup');
-    }
-  })
-
-  trashIcon.addEventListener('click', () => {
-    deleteTask(currentProject, taskArea.getAttribute('data-index'));
-    taskDisplay.textContent = '';
-    currentProject.taskList.forEach(item => tasksUI(item));
-    createTaskAdd();
-  })
-
-  circleIcon.addEventListener('click', (e) => {
-    e.stopPropagation();
-    completeTask(task, currentProject, taskArea.getAttribute('data-index'));
-    taskDisplay.textContent = '';
-    currentProject.taskList.forEach(item => tasksUI(item));
-    currentProject.completedTasks.forEach(item => completedTasksUI(item));
-    createTaskAdd();
-  })
-}
-
-// function for showing tasks, switching projects. To remove children,
-// set textcontent to "";
-
-function pageLoad() {
-  // projects
-
-  if (localStorage.getItem('projects') === null) {
-    console.log("null");
-    const defaultProject = CreateProject('Inbox');
-    addProjectToList(defaultProject);
-    projectsUI(defaultProject);
-    currentProject = defaultProject;
-    
-    const task0 = CreateTask('Example task', '2023-06-13', 'description test', 0);
-    addTaskToProject(task0, defaultProject);
-    defaultProject.taskList.forEach(task => tasksUI(task));
-  } else {
-    console.log("not null");
-    console.log(projectList);
-    const storedProjects = JSON.parse(localStorage.getItem('projects'));
-    projectList = storedProjects;
-  }
+  showProjects();
   createProjectAdd();
 
-  createTaskAdd();
-}
+  // show tasks
+  function showTasks() {
+    taskDisplay.textContent = '';
+    projects.projectList.forEach(project => {
+      if (project.current === true) {
+        project.tasks.forEach(task => {
+          const taskArea = document.createElement('div');
+          taskArea.classList.add('task-areas');
 
-export { pageLoad };
+          const taskVisible = document.createElement('div');
+          const taskBtn = document.createElement('div');
+          taskVisible.classList.add('task');
+          taskBtn.textContent = task.title;
+
+          const taskDate = document.createElement('div');
+          if (task.dueDate === '') {
+            taskDate.textContent = '';
+          } else {
+            taskDate.textContent = format(new Date(task.dueDate), 'PP');
+          }
+          
+          const circleIcon = document.createElement('img');
+          circleIcon.src = "images/circle.svg";
+
+          const icons = document.createElement('div');
+          icons.classList.add('task-icons');
+
+          const editIcon = document.createElement('img');
+          editIcon.src = "images/edit.svg";
+          icons.appendChild(editIcon);
+
+          const trashIcon = document.createElement('img');
+          trashIcon.src = "images/trash.svg";
+          icons.appendChild(trashIcon);
+
+          taskVisible.appendChild(circleIcon);
+          taskVisible.appendChild(taskBtn);
+          taskVisible.appendChild(taskDate);
+          taskVisible.appendChild(icons);
+        
+          taskArea.appendChild(taskVisible);
+
+          const taskPopupDiv = document.createElement('div');
+          taskPopupDiv.classList.add('task-edit');
+          taskPopupDiv.classList.add('popup');
+          const titleInput = document.createElement('input');
+          titleInput.setAttribute('type', 'text');
+          titleInput.value = task.title;
+          const dueDateInput = document.createElement('input');
+          dueDateInput.setAttribute('type', 'date');
+          dueDateInput.value = task.dueDate;
+          const descriptionInput =document.createElement('input');
+          descriptionInput.setAttribute('type', 'text');
+          descriptionInput.value = task.description;
+          const priorityInput = document.createElement('input');
+          priorityInput.setAttribute('type', 'number');
+          priorityInput.setAttribute('min', 0);
+          priorityInput.setAttribute('max', 3);
+          priorityInput.value = task.priority;
+        
+          taskPopupDiv.appendChild(titleInput);
+          taskPopupDiv.appendChild(dueDateInput);
+          taskPopupDiv.appendChild(descriptionInput);
+          taskPopupDiv.appendChild(priorityInput);
+        
+          taskArea.appendChild(taskPopupDiv);
+        
+          taskDisplay.appendChild(taskArea);
+
+          // edit task
+          editIcon.addEventListener('click', (e) => {
+            e.stopPropagation();
+            taskVisible.classList.add('popup');
+            taskPopupDiv.classList.toggle('popup');
+          });
+
+          taskPopupDiv.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+              tasks.editTask(task, titleInput.value, )
+            }
+          })
+
+        })
+      }
+    })
+  }
+  
+  function createTaskAdd() {
+    const newTaskArea = document.createElement('div');
+
+    const newTaskBtn = document.createElement('button');
+    newTaskBtn.classList.add('new-task');
+    newTaskBtn.classList.add('popup');
+    newTaskBtn.classList.toggle('popup');
+    newTaskBtn.textContent = '+ Add Task';
+  
+    const taskPopupDiv = document.createElement('div');
+    taskPopupDiv.classList.add('task-edit');
+    taskPopupDiv.classList.add('popup');
+    const titleInput = document.createElement('input');
+    titleInput.setAttribute('type', 'text');
+    const dateInput = document.createElement('input');
+    dateInput.setAttribute('type', 'date');
+    const descriptionInput =document.createElement('input');
+    descriptionInput.setAttribute('type', 'text');
+    const priorityInput = document.createElement('input');
+    priorityInput.setAttribute('type', 'number');
+    priorityInput.setAttribute('min', 0);
+    priorityInput.setAttribute('max', 3);
+    priorityInput.setAttribute('value', 0);
+  
+    taskPopupDiv.appendChild(titleInput);
+    taskPopupDiv.appendChild(dateInput);
+    taskPopupDiv.appendChild(descriptionInput);
+    taskPopupDiv.appendChild(priorityInput);
+  
+    newTaskArea.appendChild(newTaskBtn);
+    newTaskArea.appendChild(taskPopupDiv);
+  
+    taskDisplay.appendChild(newTaskArea);
+
+    newTaskBtn.addEventListener('click', (e) => {
+      e.target.classList.toggle('popup');
+      e.target.nextElementSibling.classList.toggle('popup');
+    });
+
+    taskPopupDiv.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        if (titleInput.value === '') {
+          e.target.parentElement.classList.toggle('popup');
+          e.target.parentElement.previousElementSibling.classList.toggle('popup');
+        } else {
+          const currentProjectIndex = projects.projectList.findIndex(x => x.current === true);
+          const currentTaskIndex = projects.projectList[currentProjectIndex].tasks.length;
+          tasks.addTask(titleInput.value, currentProjectIndex, currentTaskIndex, dateInput.value, descriptionInput.value, priorityInput.value);
+          showTasks();
+          createTaskAdd();
+        }
+      } 
+    })
+  }
+
+  showTasks();
+  createTaskAdd();
+
+});
+
+
+  // button for adding a new project
+
+
+  // display existing projects
+  // function showProjects() {
+  //   for (const project of projects.projectList) {
+  //     console.log(project.name);
+  //     const projectArea = document.createElement('div');
+
+  //     const projectVisible = document.createElement('div');
+  //     const projectBtn = document.createElement('div');
+  //     projectVisible.classList.add('current-project');
+  //     projectVisible.classList.add('project');
+  //     projectVisible.classList.add('popup');
+  //     projectVisible.classList.toggle('popup');
+  //     projectBtn.textContent = project.name;
+    
+  //     const icons = document.createElement('div');
+  //     icons.classList.add('project-icons');
+    
+  //     const editIcon = document.createElement('img');
+  //     editIcon.src = "images/edit.svg";
+  //     icons.appendChild(editIcon);
+    
+  //     const trashIcon = document.createElement('img');
+  //     trashIcon.src = "images/trash.svg";
+  //     icons.appendChild(trashIcon);
+    
+  //     projectVisible.appendChild(projectBtn);
+  //     projectVisible.appendChild(icons);
+    
+  //     const projectPopupDiv = document.createElement('div');
+  //     projectPopupDiv.classList.add('popup');
+  //     const projectNameInput = document.createElement('input');
+  //     projectNameInput.setAttribute('type', 'text');
+  //     projectNameInput.value = project.name;
+  //     projectPopupDiv.appendChild(projectNameInput);
+    
+  //     projectArea.appendChild(projectVisible);
+  //     projectArea.appendChild(projectPopupDiv);
+  //     projectDisplay.appendChild(projectArea);
+
+  //   }
+  // }
+
+
+
+
+// function pageLoad() {
+  // // projects
+
+  // if (localStorage.getItem('projects') === null) {
+  //   console.log("null");
+  //   const defaultProject = CreateProject('Inbox');
+  //   addProjectToList(defaultProject);
+  //   projectsUI(defaultProject);
+  //   currentProject = defaultProject;
+    
+  //   const task0 = CreateTask('Example task', '2023-06-13', 'description test', 0);
+  //   addTaskToProject(task0, defaultProject);
+  //   defaultProject.taskList.forEach(task => tasksUI(task));
+  // } else {
+  //   console.log("not null");
+  //   console.log(projectList);
+  //   const storedProjects = JSON.parse(localStorage.getItem('projects'));
+  //   projectList = storedProjects;
+  // }
+  // createProjectAdd();
+  // console.log(projects.projectList);
+
+  // createTaskAdd();
+
+
+export default pageLoad;

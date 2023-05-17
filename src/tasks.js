@@ -57,8 +57,23 @@ const tasks = (() => {
 
   function addTask(title, projectIndex, taskIndex, dueDate, description, priority, completed) {
     const newTask = CreateTask(title, projectIndex, taskIndex, dueDate, description, priority, completed);
+    const newTaskTitle = newTask.title;
+    const newTaskProjectIndex = newTask.projectIndex;
+    const newTaskTaskIndex = newTask.taskIndex;
+    const newTaskDueDate = newTask.dueDate;
+    const newTaskDescription = newTask.description;
+    const newTaskPriority = newTask.priority;
+    const newTaskCompleted = newTask.taskCompleted;
 
-    projects.projectList[projectIndex].tasks.push(newTask);
+    projects.projectList[projectIndex].tasks.push({
+      title: newTaskTitle,
+      projectIndex: newTaskProjectIndex,
+      taskIndex: newTaskTaskIndex,
+      dueDate: newTaskDueDate,
+      description: newTaskDescription,
+      priority: newTaskPriority,
+      completed: newTaskCompleted
+    });
   }
 
   function editTask(task, newTitle, newDueDate, newDescription, newPriority) {

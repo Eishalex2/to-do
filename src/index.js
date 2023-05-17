@@ -1,3 +1,3 @@
-import { pageLoad } from "./dom";
+import pageLoad from "./dom";
 
 pageLoad();
