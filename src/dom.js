@@ -1,4 +1,4 @@
-import { format } from 'date-fns';
+import { format, parseISO } from 'date-fns';
 import projects from "./projects";
 import tasks from "./tasks";
 
@@ -166,11 +166,12 @@ const pageLoad = (() => {
           taskVisible.classList.add('task');
           taskBtn.textContent = task.title;
 
+          const realTaskDate = parseISO(task.dueDate);
           const taskDate = document.createElement('div');
           if (task.dueDate === '') {
             taskDate.textContent = '';
           } else {
-            taskDate.textContent = format(new Date(task.dueDate), 'PP');
+            taskDate.textContent = format(new Date(realTaskDate), 'PP');
           }
           
           const circleIcon = document.createElement('img');
@@ -234,7 +235,8 @@ const pageLoad = (() => {
               const currentTaskIndex = projects.projectList[currentProjectIndex].tasks.findIndex(x => x.title === taskBtn.textContent);
               tasks.editTask(currentProjectIndex, currentTaskIndex, titleInput.value, dueDateInput.value, descriptionInput.value, priorityInput.value);
               taskBtn.textContent = titleInput.value;
-              taskDate.textContent = format(new Date(dueDateInput.value), 'PP');
+              const newRealTaskDate = parseISO(dueDateInput.value)
+              taskDate.textContent = format(new Date(newRealTaskDate), 'PP');
               taskVisible.classList.toggle('popup');
               taskPopupDiv.classList.toggle('popup');
             }

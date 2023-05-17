@@ -11,4 +11,4 @@ Todo list project in TOP
 - Due date stuff (done)
 - Delete tasks (done)
 - Maybe showing the description and property instead of just the title for tasks.
-- storage
+- storage (done)
